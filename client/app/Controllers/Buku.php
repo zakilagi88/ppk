@@ -61,7 +61,7 @@ class Buku extends BaseController
         if ($data) {
             return $this->respond($data);
         } else {
-            return $this->failNotFound('Data tidak ditemukan.');
+            return $this->failNotFound('Data tidak ditemukan');
         }
     }
 
