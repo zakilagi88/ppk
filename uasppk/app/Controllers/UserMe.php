@@ -99,17 +99,14 @@ class UserMe extends ResourceController
                 'angkatan' => $json->angkatan,
                 'kelas' => $json->kelas,
                 'alamat' => $json->alamat,
-                // 'avatar' => $json->avatar
             ];
         } else {
-            $input = $this->request->getRawInput();
             $data = [
-                'nama' => $input['nama'],
-                'email' => $input['email'],
-                'angkatan' => $input['angkatan'],
-                'kelas' => $input['kelas'],
-                'alamat' => $input['alamat'],
-                // 'avatar' => $input['avatar']
+                'nama' => $this->request->getVar('nama'),
+                'email' => $this->request->getVar('email'),
+                'angkatan' => $this->request->getVar('angkatan'),
+                'kelas' => $this->request->getVar('kelas'),
+                'alamat' => $this->request->getVar('alamat'),
             ];
         }
 
@@ -130,6 +127,7 @@ class UserMe extends ResourceController
             "alamat" => $user['alamat'],
             "role" => $user['role']
         );
+        $model->save($payload);
         $token = JWT::encode($payload, $key, 'HS256');
         $response = [
             'status'   => 200,

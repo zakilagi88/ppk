@@ -6,6 +6,9 @@ use App\Models\DetailModel;
 use App\Models\ArtikelModel;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\HTTP\Files\UploadedFile;
+use CodeIgniter\Files\File;
+    
 
 class Artikel extends BaseController
 {
@@ -14,27 +17,27 @@ class Artikel extends BaseController
     public function __construct()
     {
         $this->Artikel = new ArtikelModel();
-        // $this->Detail = new DetailModel();
-        // $this->Detail->getDetailModel();
     }
 
     public function index()
     {
-        // $data = $this->Artikel->getDetailModel();
         $data = $this->Artikel->findAll();
-        // dd($data);
         return $this->respond($data);
     }
 
     public function create()
     {
+        $gambar_artikel = $this->request->getFile('gambar_artikel');
+        $gambar_artikel->move('img');
+        $nama_file = $gambar_artikel->getName();
         $data = [
             'judul_artikel' => $this->request->getVar('judul_artikel'),
-            'gambar_artikel' => $this->request->getVar('gambar_artikel'),
+            'gambar_artikel' => $nama_file,
             'pengirim_artikel' => $this->request->getVar('pengirim_artikel'),
             'tanggal_artikel' => $this->request->getVar('tanggal_artikel'),
             'isi_artikel' => $this->request->getVar('isi_artikel'),
         ];
+    
         $this->Artikel->save($data);
         // $this->Artikel->save($data);
         $response = [
@@ -44,12 +47,12 @@ class Artikel extends BaseController
                 'success' => 'Data Artikel berhasil ditambahkan.'
             ]
         ];
-        return $this->respondCreated($response);
+        return $this->respond($response);
     }
 
     public function show($id = null)
     {
-        $data = $this->Artikel->where('id', $id)->first();
+        $data = $this->Artikel->where('id_artikel', $id)->first();
         if ($data) {
             return $this->respond($data);
         } else {
@@ -57,27 +60,27 @@ class Artikel extends BaseController
         }
     }
 
-    public function update($id = null)
+    public function update($id)
     {
-        $json = $this->request->getJSON();
-        if ($json) {
+        helper(['form', 'array']);
+        $gambar_artikel = dot_array_search('gambar_artikel.name', $_FILES);
+        
             $data = [
-                'judul_artikel'    => $json->judul_artikel,
-                'gambar_artikel'     => $json->gambar_artikel,
-                'pengirim_artikel'   => $json->pengirim_artikel,
-                'tanggal_artikel'  => $json->tanggal_artikel,
-                'isi_artikel' => $json->isi_artikel,
+                'judul_artikel'    => $this->request->getPost('judul_artikel'),
+                'gambar_artikel'     => $this->request->getVar('gambar_artikel'),
+                'pengirim_artikel'   => $this->request->getPost('pengirim_artikel'),
+                'tanggal_artikel'  => $this->request->getPost('tanggal_artikel'),
+                'isi_artikel' => $this->request->getPost('isi_artikel'),
             ];
-        } else {
-            $input = $this->request->getRawInput();
-            $data = [
-                'judul_artikel'    => $input['judul_artikel'],
-                'gambar_artikel'     => $input['gambar_artikel'],
-                'pengirim_artikel'   => $input['pengirim_artikel'],
-                'tanggal_artikel'  => $input['tanggal_artikel'],
-                'isi_artikel' => $input['isi_artikel']
-            ];
+
+        if ($gambar_artikel != '') {
+
+            $img = $this->request->getFile('gambar_artikel');
+            $img->move('img');
+            $nama_file = $img->getName();
+            $data['gambar_artikel'] = $nama_file;
         }
+
         $this->Artikel->update($id, $data);
         $response = [
             'status'   => 200,

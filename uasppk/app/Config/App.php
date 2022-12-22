@@ -24,7 +24,8 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $baseURL = 'http://localhost:8080/';
+    public $baseURL = 'http://192.168.18.55/restapi/uasppk/public/';
+    // public $baseURL = 'http://192.168.71.227/restapi/uasppk/public/';
 
     /**
      * --------------------------------------------------------------------------
@@ -37,7 +38,7 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $indexPage = 'index.php';
+    public $indexPage = '';
 
     /**
      * --------------------------------------------------------------------------
